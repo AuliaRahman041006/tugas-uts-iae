@@ -1,19 +1,24 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\OrderController;
 use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| API Routes
+| ORDER SERVICE — Port 8003
 |--------------------------------------------------------------------------
 |
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
+| ALUR SISTEM:
+| 1. User melakukan order → POST /api/orders
+| 2. Sistem mengecek user → panggil User Service (port 8001)
+| 3. Sistem mengecek produk & stok → panggil Product Service (port 8002)
+| 4. Order dibuat → simpan di database Order Service
+| 5. Stok produk berkurang → panggil Product Service reduce-stock
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::get('/orders', [OrderController::class, 'index']);
+Route::post('/orders', [OrderController::class, 'store']);
+Route::get('/orders/{id}', [OrderController::class, 'show']);
+Route::put('/orders/{id}/status', [OrderController::class, 'updateStatus']);
+Route::post('/orders/{id}/cancel', [OrderController::class, 'cancel']);
