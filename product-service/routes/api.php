@@ -1,19 +1,28 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| API Routes
+| PRODUCT SERVICE — Port 8002
 |--------------------------------------------------------------------------
 |
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
+| Handles: CRUD Product, Check Stock, Reduce Stock
+| Auth diverifikasi lewat User Service (port 8001)
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// Public — list & detail products
+Route::get('/products', [ProductController::class, 'index']);
+Route::get('/products/{id}', [ProductController::class, 'show']);
+
+// Protected — manage products (auth dicek via User Service)
+Route::post('/products', [ProductController::class, 'store']);
+Route::put('/products/{id}', [ProductController::class, 'update']);
+Route::delete('/products/{id}', [ProductController::class, 'destroy']);
+
+// Internal endpoints — dipanggil oleh Order Service
+Route::post('/products/{id}/check-stock', [ProductController::class, 'checkStock']);
+Route::post('/products/{id}/reduce-stock', [ProductController::class, 'reduceStock']);
+Route::post('/products/{id}/restore-stock', [ProductController::class, 'restoreStock']);
